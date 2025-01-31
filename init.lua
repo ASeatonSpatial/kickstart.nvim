@@ -163,6 +163,10 @@ vim.opt.scrolloff = 10
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
+-- Tab and Shift-Tab to cycle through buffers
+vim.keymap.set('n', '<Tab>', '<cmd>bnext<CR>')
+vim.keymap.set('n', '<S-Tab>', '<cmd>bprev<CR>')
+
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
@@ -626,6 +630,14 @@ require('lazy').setup({
         -- clangd = {},
         -- gopls = {},
         -- pyright = {},
+        --
+        -- R LSP setup:
+        -- ------------
+        --
+        -- See https://github.com/REditorSupport/languageserver?tab=readme-ov-file#settings
+        -- for settings for r_language_server
+        --
+        -- In future may want to tweak documentOnTypeFormattingProvider
         r_language_server = {
           settings = {
             diagnostics = false,
