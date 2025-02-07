@@ -448,8 +448,24 @@ require('lazy').setup({
       end, { desc = '[S]earch [N]eovim files' })
     end,
   },
-
-  -- LSP Plugins
+  {
+    -- LSP Plugins
+    --
+    -- Quarto support: for lsp features in code cells / embedded code
+    'jmbuhr/otter.nvim',
+    dev = false,
+    dependencies = {
+      {
+        'neovim/nvim-lspconfig',
+        'nvim-treesitter/nvim-treesitter',
+      },
+    },
+    opts = {
+      verbose = {
+        no_code_found = false,
+      },
+    },
+  },
   {
     -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
     -- used for completion, annotations and signatures of Neovim apis
