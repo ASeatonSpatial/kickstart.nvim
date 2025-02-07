@@ -876,6 +876,7 @@ require('lazy').setup({
             group_index = 0,
           },
           { name = 'nvim_lsp' },
+          { name = 'otter' },
           { name = 'luasnip' },
           { name = 'path' },
         },
