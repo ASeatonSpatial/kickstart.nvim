@@ -1,0 +1,33 @@
+---
+title: test
+format: html
+---
+
+# Here is a title
+
+Here is some text.
+
+```{r}
+print(
+  "hello")
+myfun = function(){
+  return(100)
+}
+myfun()
+```
+
+Here is a plot:
+
+```{r}
+library(ggplot2)
+df = data.frame(x = runif(10),
+                y = runif(10))
+ggplot(df) +
+  geom_point(aes(x = x, y = y))
+# This is an R comment
+```
+
+<!-- Not sure how to get the full LSP  -->
+<!-- functionality (code styling etc) within -->
+<!-- an r code chunk. -->
+

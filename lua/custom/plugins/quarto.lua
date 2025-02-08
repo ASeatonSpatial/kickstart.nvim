@@ -143,9 +143,19 @@ return {
   --
   --
   --  Autoformat code chunks
-  { 
+  {
     'stevearc/conform.nvim',
     enabled = true,
+    keys = {
+      {
+        '<leader>cf',
+        function()
+          require('conform').format { async = true, lsp_format = 'fallback' }
+        end,
+        mode = '',
+        desc = '[F]ormat code',
+      },
+    },
     config = function()
       require('conform').setup {
         notify_on_error = false,
@@ -157,6 +167,7 @@ return {
           lua = { 'mystylua' },
           python = { 'isort', 'black' },
           quarto = { 'injected' },
+          r = { 'styler' },
         },
         formatters = {
           mystylua = {
