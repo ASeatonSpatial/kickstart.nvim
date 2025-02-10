@@ -1,6 +1,8 @@
 {
   "LuaSnip": { "branch": "master", "commit": "c9b9a22904c97d0eb69ccb9bab76037838326817" },
   "bamboo.nvim": { "branch": "master", "commit": "0a94f81705733951be286493b8d1876d0e3d990f" },
+  "cmp-buffer": { "branch": "main", "commit": "3022dbc9166796b644a841a02de8dd1cc1d311fa" },
+  "cmp-cmdline": { "branch": "main", "commit": "d250c63aa13ead745e3a40f61fdd3470efde3923" },
   "cmp-nvim-lsp": { "branch": "main", "commit": "99290b3ec1322070bcfb9e846450a46f6efa50f0" },
   "cmp-path": { "branch": "main", "commit": "91ff86cd9c29299a64f968ebb45846c485725f23" },
   "cmp_luasnip": { "branch": "master", "commit": "98d9cb5c2c38532bd9bdb481067b20fea8f32e90" },
@@ -20,7 +22,6 @@
   "nvim-treesitter": { "branch": "master", "commit": "62911c78a868bac24c8a86f2c1c412d0b799f885" },
   "nvim-treesitter-textobjects": { "branch": "master", "commit": "ad8f0a472148c3e0ae9851e26a722ee4e29b1595" },
   "otter.nvim": { "branch": "main", "commit": "0e42fa795c35c7190935e3beda3791189c41bb72" },
-  "outline.nvim": { "branch": "main", "commit": "f01eae624e6170656b6fadd6d7b8717636078bd6" },
   "plenary.nvim": { "branch": "master", "commit": "3707cdb1e43f5cea73afb6037e6494e7ce847a66" },
   "quarto-nvim": { "branch": "main", "commit": "abc417c7e7422033f1090c0da5f30ef3ecb0c7ca" },
   "telescope-fzf-native.nvim": { "branch": "main", "commit": "dae2eac9d91464448b584c7949a31df8faefec56" },

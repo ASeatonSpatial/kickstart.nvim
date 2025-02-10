@@ -779,6 +779,8 @@ require('lazy').setup({
       --  into multiple repos for maintenance purposes.
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-path',
+      'hrsh7th/cmp-buffer',
+      'hrsh7th/cmp-cmdline',
     },
     config = function()
       -- See `:help cmp`
@@ -1159,6 +1161,35 @@ function CloseRTerm()
 end
 
 vim.keymap.set('n', '<leader>rq', CloseRTerm, { desc = "[C]lose R terminal", silent = true })
+
+-- Set up nvim-cmp cmdline
+require('cmp').setup({
+  sources = {
+    { name = 'buffer' },
+  },
+})
+
+local cmp = require'cmp'
+    cmp.setup.cmdline('/', {
+      mapping = cmp.mapping.preset.cmdline(),
+      sources = {
+        { name = 'buffer' }
+      }
+    })
+
+    cmp.setup.cmdline(':', {
+      mapping = cmp.mapping.preset.cmdline(),
+      sources = cmp.config.sources({
+        { name = 'path' }
+      }, {
+        {
+          name = 'cmdline',
+          option = {
+            ignore_cmds = { 'Man', '!' }
+          }
+        }
+      })
+    })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
