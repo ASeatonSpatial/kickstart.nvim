@@ -266,17 +266,15 @@ require('lazy').setup({
     },
   },
   { -- Nice landing page
-    "goolord/alpha-nvim",
+    'goolord/alpha-nvim',
     -- dependencies = { 'echasnovski/mini.icons' },
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function()
-      local startify = require("alpha.themes.startify")
+      local startify = require 'alpha.themes.startify'
       -- available: devicons, mini, default is mini
       -- if provider not loaded and enabled is true, it will try to use another provider
-      startify.file_icons.provider = "devicons"
-      require("alpha").setup(
-        startify.config
-      )
+      startify.file_icons.provider = 'devicons'
+      require('alpha').setup(startify.config)
     end,
   },
 
@@ -493,10 +491,10 @@ require('lazy').setup({
     },
   },
   {
-   'nvim-lua/plenary.nvim'
+    'nvim-lua/plenary.nvim',
   },
   { -- better gx command for opening urls
-   'chrishrb/gx.nvim',
+    'chrishrb/gx.nvim',
     enabled = false,
     keys = { { 'gx', '<cmd>Browse<cr>', mode = { 'n', 'x' } } },
     cmd = { 'Browse' },
@@ -897,16 +895,14 @@ require('lazy').setup({
   -- Colour scheme:
   -- see https://github.com/ribru17/bamboo.nvim
   {
-  'ribru17/bamboo.nvim',
-  lazy = false,
-  priority = 1000,
-  config = function()
-    require('bamboo').setup {
-
-    }
-    require('bamboo').load()
-  end,
-},
+    'ribru17/bamboo.nvim',
+    lazy = false,
+    priority = 1000,
+    config = function()
+      require('bamboo').setup {}
+      require('bamboo').load()
+    end,
+  },
 
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
@@ -1007,25 +1003,25 @@ require('lazy').setup({
 
 -- TODO:
 -- 1. Modularise - keybinds.lua, autocmd.lua, quarto.lua and so on.
--- 2. Add support for markdown files.  Knitr nvim plugins? 
+-- 2. Add support for markdown files.  Knitr nvim plugins?
 -- 3. Try the folke/flash plugin for faster navigation? It looks really cool.
 -- 4. General git integration plugins.  Or stick with sourcetree? Investigate
 -- 5. Check out the oil plugin to edit filesystem in a buffer
 
 -- Quarto keybinds
-local quarto = require('quarto')
+local quarto = require 'quarto'
 quarto.setup()
 
 -- Quarto preview
-vim.keymap.set('n', '<leader>qp', quarto.quartoPreview, { silent = true, noremap = true, desc = "Quarto preview" })
+vim.keymap.set('n', '<leader>qp', quarto.quartoPreview, { silent = true, noremap = true, desc = 'Quarto preview' })
 
 -- Insert R code chunk on new line below current line
-vim.keymap.set('n','<leader>qc', 'o```{r}<CR>```<esc>O', {desc = "[I]nsert R code chunk"})
+vim.keymap.set('n', '<leader>qc', 'o```{r}<CR>```<esc>O', { desc = '[I]nsert R code chunk' })
 
 -- R keybinds
 --
 -- Open R terminal split
-vim.keymap.set('n','<leader>rs', ':split | terminal R<CR>G<C-w>k', {desc = "[O]pen R terminal"})
+vim.keymap.set('n', '<leader>rs', ':split | terminal R<CR>G<C-w>k', { desc = '[O]pen R terminal' })
 
 -- Autocommand to remove line numbers from terminal windows
 vim.api.nvim_create_autocmd({ 'TermOpen' }, {
@@ -1070,7 +1066,7 @@ local function send_region()
   -- Check if we are in visual mode
   if vim.fn.visualmode() == '' then
     -- If not in visual mode, select the current line
-    vim.cmd('normal! V')
+    vim.cmd 'normal! V'
   end
 
   -- If filetype is not quarto, just send the region
@@ -1110,7 +1106,7 @@ local function send_code()
     -- If in a .R file, call send_region (for regions of code)
     send_region()
   else
-    print("Not in a .qmd or .R file. Unable to send code.")
+    print 'Not in a .qmd or .R file. Unable to send code.'
   end
 end
 
@@ -1118,92 +1114,89 @@ end
 local function send_all_code()
   if vim.bo.filetype == 'r' then
     local cursor_pos = vim.api.nvim_win_get_cursor(0)
-    vim.cmd('normal! ggVG')
+    vim.cmd 'normal! ggVG'
     send_region()
     vim.api.nvim_win_set_cursor(0, cursor_pos)
   else
-    print("Not a .R file. Unable to send code.")
+    print 'Not a .R file. Unable to send code.'
   end
 end
 
 -- Send one line from an R file
 local function send_one_line()
   if vim.bo.filetype == 'r' then
-    vim.cmd('normal! V')
+    vim.cmd 'normal! V'
     send_region()
-    vim.cmd('normal! <esc>')
+    vim.cmd 'normal! <esc>'
   else
-    print("Not a .R file. Unable to send code.")
+    print 'Not a .R file. Unable to send code.'
   end
 end
 
 -- send code maps
-vim.keymap.set('','<leader>rr', send_code, {desc = "[R]un R code chunk"})
-vim.keymap.set('','<leader>ra', send_all_code, {desc = "[R]un R file"})
-vim.keymap.set('','<leader>rl', send_one_line, {desc = "[R]un current line of R code"})
+vim.keymap.set('', '<leader>rr', send_code, { desc = '[R]un R code chunk' })
+vim.keymap.set('', '<leader>ra', send_all_code, { desc = '[R]un R file' })
+vim.keymap.set('', '<leader>rl', send_one_line, { desc = '[R]un current line of R code' })
 
 -- send one line and move cursor down
-vim.keymap.set('','<leader>rj',
-  function()
+vim.keymap.set('', '<leader>rj', function()
   send_one_line()
-  vim.cmd("normal! j")
-  end,
-  {desc = "[R]un current line of R code and move cursor down"}
-)
+  vim.cmd 'normal! j'
+end, { desc = '[R]un current line of R code and move cursor down' })
 
 -- Close R terminal
 function CloseRTerm()
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-    if vim.bo[buf].buftype == "terminal" then
+    if vim.bo[buf].buftype == 'terminal' then
       -- Get the terminal buffer name
       local buf_name = vim.api.nvim_buf_get_name(buf)
-      if buf_name:match(":%d+:R$") or buf_name:match(":R$") then
+      if buf_name:match ':%d+:R$' or buf_name:match ':R$' then
         -- Send quit() command to R
-        vim.api.nvim_chan_send(vim.bo[buf].channel, "quit()\n")
+        vim.api.nvim_chan_send(vim.bo[buf].channel, 'quit()\n')
         -- Close the terminal buffer after a short delay to allow R to exit
         vim.defer_fn(function()
           if vim.api.nvim_buf_is_valid(buf) then
             vim.api.nvim_buf_delete(buf, { force = true })
           end
-        end, 500)  -- Wait 500ms before closing to let R quit cleanly
+        end, 500) -- Wait 500ms before closing to let R quit cleanly
 
         return
       end
     end
   end
-  print("No R terminal found")
+  print 'No R terminal found'
 end
 
-vim.keymap.set('n', '<leader>rq', CloseRTerm, { desc = "[C]lose R terminal", silent = true })
+vim.keymap.set('n', '<leader>rq', CloseRTerm, { desc = '[C]lose R terminal', silent = true })
 
 -- Set up nvim-cmp cmdline
-require('cmp').setup({
+require('cmp').setup {
+  sources = {
+    { name = 'buffer' },
+  },
+}
+
+local cmp = require 'cmp'
+cmp.setup.cmdline('/', {
+  mapping = cmp.mapping.preset.cmdline(),
   sources = {
     { name = 'buffer' },
   },
 })
 
-local cmp = require'cmp'
-    cmp.setup.cmdline('/', {
-      mapping = cmp.mapping.preset.cmdline(),
-      sources = {
-        { name = 'buffer' }
-      }
-    })
-
-    cmp.setup.cmdline(':', {
-      mapping = cmp.mapping.preset.cmdline(),
-      sources = cmp.config.sources({
-        { name = 'path' }
-      }, {
-        {
-          name = 'cmdline',
-          option = {
-            ignore_cmds = { 'Man', '!' }
-          }
-        }
-      })
-    })
+cmp.setup.cmdline(':', {
+  mapping = cmp.mapping.preset.cmdline(),
+  sources = cmp.config.sources({
+    { name = 'path' },
+  }, {
+    {
+      name = 'cmdline',
+      option = {
+        ignore_cmds = { 'Man', '!' },
+      },
+    },
+  }),
+})
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
