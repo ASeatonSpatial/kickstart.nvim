@@ -969,6 +969,10 @@ require('lazy').setup({
   },
 })
 
+-- TODO:
+-- 1. Modularise - keybinds.lua, autocmd.lua, quarto.lua and so on.
+-- 2. Add support for markdown files.  Knitr nvim plugins? 
+
 -- Quarto keybinds
 local quarto = require('quarto')
 quarto.setup()
