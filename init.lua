@@ -1024,28 +1024,68 @@ end
 local slime_send_region_cmd = ':<C-u>call slime#send_op(visualmode(), 1)<CR>'
 slime_send_region_cmd = vim.api.nvim_replace_termcodes(slime_send_region_cmd, true, false, true)
 local function send_region()
-  -- if filetyps is not quarto, just send_region
+  -- Check if we are in visual mode
+  if vim.fn.visualmode() == '' then
+    -- If not in visual mode, select the current line
+    vim.cmd('normal! V')
+  end
+
+  -- If filetype is not quarto, just send the region
   if vim.bo.filetype ~= 'quarto' or vim.b['quarto_is_r_mode'] == nil then
     vim.cmd('normal' .. slime_send_region_cmd)
     return
   end
+
+  -- Handle Quarto R mode
   if vim.b['quarto_is_r_mode'] == true then
     vim.g.slime_python_ipython = 0
     local is_python = require('otter.tools.functions').is_otter_language_context 'python'
+
+    -- If we're in Python, start reticulate if not already running
     if is_python and not vim.b['reticulate_running'] then
       vim.fn['slime#send']('reticulate::repl_python()' .. '\r')
       vim.b['reticulate_running'] = true
     end
+
+    -- If we're not in Python and reticulate is running, exit reticulate
     if not is_python and vim.b['reticulate_running'] then
       vim.fn['slime#send']('exit' .. '\r')
       vim.b['reticulate_running'] = false
     end
+
+    -- Send the region (or the selected line)
     vim.cmd('normal' .. slime_send_region_cmd)
   end
 end
 
+local function send_code()
+  -- Check if the current file is a .qmd file
+  if vim.bo.filetype == 'quarto' then
+    -- If in a Quarto document (R or Python code), call send_cell
+    send_cell()
+  elseif vim.bo.filetype == 'r' then
+    -- If in a .R file, call send_region (for regions of code)
+    send_region()
+  else
+    print("Not in a .qmd or .R file. Unable to send code.")
+  end
+end
+
+-- Send an entire R file to R buffer
+local function send_all_code()
+  if vim.bo.filetype == 'r' then
+    local cursor_pos = vim.api.nvim_win_get_cursor(0)
+    vim.cmd('normal! ggVG')
+    send_region()
+    vim.api.nvim_win_set_cursor(0, cursor_pos)
+  else
+    print("Not a .R file. Unable to send code.")
+  end
+end
+
 -- send code
-vim.keymap.set('','<leader>rr', send_cell, {desc = "[R]un R code chunk"})
+vim.keymap.set('','<leader>rr', send_code, {desc = "[R]un R code chunk"})
+vim.keymap.set('','<leader>ra', send_all_code, {desc = "[R]un R code chunk"})
 
 -- Close R terminal
 function CloseRTerm()
