@@ -972,7 +972,12 @@ require('lazy').setup({
 -- Quarto keybinds
 local quarto = require('quarto')
 quarto.setup()
+
+-- Quarto preview
 vim.keymap.set('n', '<leader>qp', quarto.quartoPreview, { silent = true, noremap = true, desc = "Quarto preview" })
+
+-- Insert R code chunk on new line below current line
+vim.keymap.set('n','<leader>qc', 'o```{r}<CR>```<esc>O', {desc = "[I]nsert R code chunk"})
 
 -- R keybinds
 vim.keymap.set('n','<leader>rs', ':split | terminal R<CR>G<C-w>k', {desc = "[O]pen R terminal"})
