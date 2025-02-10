@@ -39,7 +39,7 @@ f(x) = \int x^2 \mathrm{d}x
 $$
 To find keymap search nabla in quarto.lua
 
-Also let's see how an inline equation like $f(x) = \Pi_j \delta(x_j)$
+Also let's see how an inline equation like $f(x) = \Pi_j \delta(x_j)$.  If I keep writing let's see if the wrapped text from the ftplugin/quarto.lua file is working.
 
 
 
