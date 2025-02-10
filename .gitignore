@@ -6,8 +6,5 @@ nvim
 spell/
 # lazy-lock.json
 
-test.R
-test.r
-test.qmd
 test.html
 test_files
