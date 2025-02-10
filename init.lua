@@ -980,7 +980,97 @@ vim.keymap.set('n', '<leader>qp', quarto.quartoPreview, { silent = true, noremap
 vim.keymap.set('n','<leader>qc', 'o```{r}<CR>```<esc>O', {desc = "[I]nsert R code chunk"})
 
 -- R keybinds
+--
+-- Open R terminal split
 vim.keymap.set('n','<leader>rs', ':split | terminal R<CR>G<C-w>k', {desc = "[O]pen R terminal"})
+
+-- Autocommand to remove line numbers from terminal windows
+vim.api.nvim_create_autocmd({ 'TermOpen' }, {
+  pattern = { '*' },
+  callback = function(_)
+    vim.cmd.setlocal 'nonumber'
+    vim.wo.signcolumn = 'no'
+  end,
+})
+
+-- Slime things
+--- If an R terminal has been opened, this is in r_mode
+--- and will handle python code via reticulate when sent
+--- from a python chunk.
+local function send_cell()
+  if vim.b['quarto_is_r_mode'] == nil then
+    vim.fn['slime#send_cell']()
+    return
+  end
+  if vim.b['quarto_is_r_mode'] == true then
+    vim.g.slime_python_ipython = 0
+    local is_python = require('otter.tools.functions').is_otter_language_context 'python'
+    if is_python and not vim.b['reticulate_running'] then
+      vim.fn['slime#send']('reticulate::repl_python()' .. '\r')
+      vim.b['reticulate_running'] = true
+    end
+    if not is_python and vim.b['reticulate_running'] then
+      vim.fn['slime#send']('exit' .. '\r')
+      vim.b['reticulate_running'] = false
+    end
+    vim.fn['slime#send_cell']()
+  end
+end
+
+--- Send code to terminal with vim-slime
+--- If an R terminal has been opend, this is in r_mode
+--- and will handle python code via reticulate when sent
+--- from a python chunk.
+local slime_send_region_cmd = ':<C-u>call slime#send_op(visualmode(), 1)<CR>'
+slime_send_region_cmd = vim.api.nvim_replace_termcodes(slime_send_region_cmd, true, false, true)
+local function send_region()
+  -- if filetyps is not quarto, just send_region
+  if vim.bo.filetype ~= 'quarto' or vim.b['quarto_is_r_mode'] == nil then
+    vim.cmd('normal' .. slime_send_region_cmd)
+    return
+  end
+  if vim.b['quarto_is_r_mode'] == true then
+    vim.g.slime_python_ipython = 0
+    local is_python = require('otter.tools.functions').is_otter_language_context 'python'
+    if is_python and not vim.b['reticulate_running'] then
+      vim.fn['slime#send']('reticulate::repl_python()' .. '\r')
+      vim.b['reticulate_running'] = true
+    end
+    if not is_python and vim.b['reticulate_running'] then
+      vim.fn['slime#send']('exit' .. '\r')
+      vim.b['reticulate_running'] = false
+    end
+    vim.cmd('normal' .. slime_send_region_cmd)
+  end
+end
+
+-- send code
+vim.keymap.set('','<leader>rr', send_cell, {desc = "[R]un R code chunk"})
+
+-- Close R terminal
+function CloseRTerm()
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.bo[buf].buftype == "terminal" then
+      -- Get the terminal buffer name
+      local buf_name = vim.api.nvim_buf_get_name(buf)
+      if buf_name:match(":%d+:R$") or buf_name:match(":R$") then
+        -- Send quit() command to R
+        vim.api.nvim_chan_send(vim.bo[buf].channel, "quit()\n")
+        -- Close the terminal buffer after a short delay to allow R to exit
+        vim.defer_fn(function()
+          if vim.api.nvim_buf_is_valid(buf) then
+            vim.api.nvim_buf_delete(buf, { force = true })
+          end
+        end, 500)  -- Wait 500ms before closing to let R quit cleanly
+
+        return
+      end
+    end
+  end
+  print("No R terminal found")
+end
+
+vim.keymap.set('n', '<leader>rq', CloseRTerm, { desc = "[C]lose R terminal", silent = true })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
