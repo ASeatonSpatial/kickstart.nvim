@@ -115,7 +115,8 @@ return {
   { -- preview equations
     'jbyuki/nabla.nvim',
     keys = {
-      { '<leader>qm', ':lua require"nabla".toggle_virt()<cr>', desc = 'toggle [m]ath equations' },
+      { '<leader>qm', ':lua require"nabla".toggle_virt()<cr>', desc = 'toggle inline [m]ath equations' },
+      { '<leader>qe', ':lua require("nabla").popup()<CR>', desc = 'toggle [m]ath preview' },
     },
   },
 

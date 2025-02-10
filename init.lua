@@ -1086,7 +1086,7 @@ end
 -- Send one line from an R file
 local function send_one_line()
   if vim.bo.filetype == 'r' then
-    vim.cmd('normal! 0v$')
+    vim.cmd('normal! V')
     send_region()
     vim.cmd('normal! <esc>')
   else
