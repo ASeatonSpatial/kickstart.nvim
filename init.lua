@@ -969,5 +969,13 @@ require('lazy').setup({
   },
 })
 
+-- Quarto keybinds
+local quarto = require('quarto')
+quarto.setup()
+vim.keymap.set('n', '<leader>qp', quarto.quartoPreview, { silent = true, noremap = true, desc = "Quarto preview" })
+
+-- R keybinds
+vim.keymap.set('n','<leader>rs', ':split | terminal R<CR>G<C-w>k', {desc = "[O]pen R terminal"})
+
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et

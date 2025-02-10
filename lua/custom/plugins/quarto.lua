@@ -13,7 +13,6 @@ return {
       'jmbuhr/otter.nvim',
     },
   },
-
   -- { -- directly open ipynb files as quarto docuements
   --   -- and convert back behind the scenes
   --   'GCBallesteros/jupytext.nvim',
