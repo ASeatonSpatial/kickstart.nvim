@@ -992,6 +992,9 @@ require('lazy').setup({
 -- TODO:
 -- 1. Modularise - keybinds.lua, autocmd.lua, quarto.lua and so on.
 -- 2. Add support for markdown files.  Knitr nvim plugins? 
+-- 3. Try the folke/flash plugin for faster navigation? It looks really cool.
+-- 4. General git integration plugins.  Or stick with sourcetree? Investigate
+-- 5. Check out the oil plugin to edit filesystem in a buffer
 
 -- Quarto keybinds
 local quarto = require('quarto')
