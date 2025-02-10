@@ -1083,9 +1083,30 @@ local function send_all_code()
   end
 end
 
--- send code
+-- Send one line from an R file
+local function send_one_line()
+  if vim.bo.filetype == 'r' then
+    vim.cmd('normal! 0v$')
+    send_region()
+    vim.cmd('normal! <esc>')
+  else
+    print("Not a .R file. Unable to send code.")
+  end
+end
+
+-- send code maps
 vim.keymap.set('','<leader>rr', send_code, {desc = "[R]un R code chunk"})
-vim.keymap.set('','<leader>ra', send_all_code, {desc = "[R]un R code chunk"})
+vim.keymap.set('','<leader>ra', send_all_code, {desc = "[R]un R file"})
+vim.keymap.set('','<leader>rl', send_one_line, {desc = "[R]un current line of R code"})
+
+-- send one line and move cursor down
+vim.keymap.set('','<leader>rj',
+  function()
+  send_one_line()
+  vim.cmd("normal! j")
+  end,
+  {desc = "[R]un current line of R code and move cursor down"}
+)
 
 -- Close R terminal
 function CloseRTerm()
