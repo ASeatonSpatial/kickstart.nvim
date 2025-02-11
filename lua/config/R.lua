@@ -149,74 +149,59 @@ vim.keymap.set('n', '<leader>rq', CloseRTerm, { desc = '[C]lose R terminal', sil
 --  3. Modular - things like "send all lines above" will chunk up
 --     and call the paragraph sender and cycle through them.
 -- treesitter logic to define paragraphs? Will need to learn more about this.
--- 
+--
 --
 
 --- Smarter slime
-local function highlight_smart_paragraph()
-  local ts_utils = require('nvim-treesitter.ts_utils')
-  local node = ts_utils.get_node_at_cursor()
+---
+--- Paragraph definitions
+--- We need to define what a "paragraph" is.
 
-  if not node then
-    -- Move cursor to first non-blank character before retrying
-    vim.cmd('normal! ^')
-    node = ts_utils.get_node_at_cursor()
-    if not node then
-      print("No syntax tree node found.")
-      return
-    end
+--- blank line above and below (this is the fallback, if no other definitions work)
+local function para_blank_line(current_line)
+  local maxline = vim.fn.line '$'
+  local result = { start_line = current_line, end_line = current_line }
+
+  -- function to search above or below for a blank line
+  local function find_blank(line, direction)
+    local out = line
+    local go = true
+    while line > 0 and line < maxline and go do
+      local linecontent = vim.fn.getline(line)
+      if linecontent:match '^%s*$' then
+        out = line - direction -- previous line before blank is paragraph limit
+        go = false
+      end
+      line = line + direction    end
+    return out
   end
 
-  -- Move up the tree to find a logical block
-  while node do
-    local type = node:type()
-    if type == "function_definition" or type == "call" or type == "for_statement" then
-      break
-    end
-    -- Handle pipes and ggplot chains
-    if type == "binary" then
-      local parent = node:parent()
-      if parent and parent:type() == "binary" then
-        node = parent -- Expand to full chain
-      end
-      break
-    end
-    node = node:parent()
-  end
+  result.start_line = find_blank(current_line, -1)
+  result.end_line = find_blank(current_line, 1)
 
-  if node then
-    local start_row, _, end_row, _ = node:range() -- Get node line range
-    local total_lines = vim.api.nvim_buf_line_count(0)
-
-    -- Expand upwards to include multi-line pipes or ggplot chains
-    while start_row > 0 do
-      local prev_line = vim.api.nvim_buf_get_lines(0, start_row - 1, start_row, false)[1]
-      if prev_line and (prev_line:match("%%>%s*$") or prev_line:match("%+%s*$")) then
-        start_row = start_row - 1 -- Include the previous line
-      else
-        break
-      end
-    end
-
-    -- Expand downwards to capture ggplot chains or pipes
-    while end_row < total_lines - 1 do
-      local next_line = vim.api.nvim_buf_get_lines(0, end_row + 1, end_row + 2, false)[1]
-      if next_line and next_line:match("^%s*[%%>%+]+") then
-        end_row = end_row + 1 -- Include the next line
-      else
-        break
-      end
-    end
-
-    -- Select the lines in Visual mode
-    vim.api.nvim_win_set_cursor(0, { start_row + 1, 0 }) -- Move to start
-    vim.cmd('normal! V') -- Enter Visual mode
-    vim.api.nvim_win_set_cursor(0, { end_row + 1, 0 }) -- Move to end
-  else
-    print("No suitable code block found.")
-  end
+  return result
 end
 
--- Keymap to test it
-vim.keymap.set('n', '<leader>rh', highlight_smart_paragraph, { desc = '[R] Highlight smart paragraph' })
+local function highlight_paragraph()
+  -- Get the current line and column position
+  local current_line = vim.fn.line '.'
+  local current_col = vim.fn.col '.'
 
+  -- Use para_blank_line to find the start and end of the paragraph
+  local para = para_blank_line(current_line)
+  local start_line = para.start_line
+  local end_line = para.end_line
+
+  -- Debug: Print the start and end lines of the paragraph
+  print("Start line: " .. start_line .. " End line: " .. end_line)
+
+  -- Move the cursor to the start line
+  vim.fn.cursor(start_line, 1)
+
+  -- Visually select the lines from start_line to end_line
+  vim.cmd('normal! V')  -- Start visual mode
+  vim.fn.cursor(end_line, 1)  -- Move to the end line
+
+end
+
+vim.keymap.set('n', '<leader>rh', highlight_paragraph, { desc = '[R] Highlight paragraph' })
