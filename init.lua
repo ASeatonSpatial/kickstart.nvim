@@ -17,7 +17,6 @@ require 'plugins.keymaps'
 -- 10. Move rest of init.lua setup into config = function() sections
 
 -- Quarto setup:
---
 local quarto = require 'quarto'
 quarto.setup()
 
@@ -76,15 +75,6 @@ vim.keymap.set('n', '<leader>qr', quarto_render, { desc = '[Q]uarto [R]ender cur
 --
 -- Open R terminal split
 vim.keymap.set('n', '<leader>rs', ':split | terminal R<CR>G<C-w>k', { desc = '[O]pen R terminal' })
-
--- Autocommand to remove line numbers from terminal windows
-vim.api.nvim_create_autocmd({ 'TermOpen' }, {
-  pattern = { '*' },
-  callback = function(_)
-    vim.cmd.setlocal 'nonumber'
-    vim.wo.signcolumn = 'no'
-  end,
-})
 
 -- Slime things
 --- If an R terminal has been opened, this is in r_mode
@@ -222,35 +212,6 @@ function CloseRTerm()
 end
 
 vim.keymap.set('n', '<leader>rq', CloseRTerm, { desc = '[C]lose R terminal', silent = true })
-
--- Set up nvim-cmp cmdline
-require('cmp').setup {
-  sources = {
-    { name = 'buffer' },
-  },
-}
-
-local cmp = require 'cmp'
-cmp.setup.cmdline('/', {
-  mapping = cmp.mapping.preset.cmdline(),
-  sources = {
-    { name = 'buffer' },
-  },
-})
-
-cmp.setup.cmdline(':', {
-  mapping = cmp.mapping.preset.cmdline(),
-  sources = cmp.config.sources({
-    { name = 'path' },
-  }, {
-    {
-      name = 'cmdline',
-      option = {
-        ignore_cmds = { 'Man', '!' },
-      },
-    },
-  }),
-})
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et

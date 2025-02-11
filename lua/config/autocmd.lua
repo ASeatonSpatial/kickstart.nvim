@@ -11,3 +11,13 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     vim.highlight.on_yank()
   end,
 })
+
+-- Autocommand to remove line numbers from terminal windows
+vim.api.nvim_create_autocmd({ 'TermOpen' }, {
+  pattern = { '*' },
+  callback = function(_)
+    vim.cmd.setlocal 'nonumber'
+    vim.wo.signcolumn = 'no'
+  end,
+})
+
