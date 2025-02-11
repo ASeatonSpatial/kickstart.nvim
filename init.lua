@@ -2,6 +2,7 @@ require 'config.global'
 require 'config.keymaps'
 require 'config.autocmd'
 require 'config.lazy'
+require 'plugins.keymaps'
 
 -- MY TODO:
 -- 1. Modularise - keybinds.lua, autocmd.lua, quarto.lua and so on.
