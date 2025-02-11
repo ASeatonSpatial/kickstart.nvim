@@ -9,6 +9,8 @@
 -- Tab and Shift-Tab to cycle through buffers
 vim.keymap.set('n', '<Tab>', '<cmd>bnext<CR>')
 vim.keymap.set('n', '<S-Tab>', '<cmd>bprev<CR>')
+-- Delete current buffer
+vim.keymap.set('n', '<leader>bd', '<cmd>bdelete<CR>', { desc = "[Close] buffer"})
 
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`

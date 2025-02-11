@@ -12,6 +12,61 @@ return {
       -- added as a nvim-cmp source in lua/plugins/completion.lua
       'jmbuhr/otter.nvim',
     },
+    config = function()
+      local quarto = require 'quarto'
+      quarto.setup()
+
+      -- Quarto preview keymap
+      vim.keymap.set('n', '<leader>qp', quarto.quartoPreview, { silent = true, noremap = true, desc = 'Quarto preview' })
+
+      -- Insert R code chunk on new line below current line
+      vim.keymap.set('n', '<leader>qc', 'o```{r}<CR>```<esc>O', { desc = '[I]nsert R code chunk' })
+
+      -- Quarto render keymap
+      local function quarto_render()
+        -- Check if the current buffer is a .qmd file
+        if vim.bo.filetype ~= 'quarto' then
+          print 'Not a .qmd file. Unable to run Quarto render.'
+          return
+        end
+
+        -- Get the full path of the current file
+        local current_file = vim.fn.expand '%:p'
+
+        -- Open a new tab with a terminal buffer
+        vim.cmd 'tabnew'
+        vim.cmd 'terminal'
+
+        vim.defer_fn(function()
+          vim.cmd 'startinsert' -- Ensure terminal starts in insert mode
+        end, 100)
+
+        -- local term_bufnr = vim.api.nvim_get_current_buf()
+
+        -- Send the `quarto render` command to the terminal
+        local render_cmd = 'quarto render ' .. vim.fn.shellescape(current_file) .. '\n'
+        vim.fn.chansend(vim.b.terminal_job_id, render_cmd)
+
+        -- Switch back to normal mode for quicker tabbing back to other files
+        local function check_render_finished()
+          local lines = vim.api.nvim_buf_get_lines(0, -10, -1, false) -- Get last 10 lines
+          for _, line in ipairs(lines) do
+            if line:match 'Output%s+created:' then
+              vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-\\><C-n>', true, false, true), 'n', true)
+              return
+            end
+          end
+          -- If not finished, check again in 500ms
+          vim.defer_fn(check_render_finished, 500)
+        end
+
+        -- Start checking for the output message
+        check_render_finished()
+      end
+
+      -- Map to <leader>qr
+      vim.keymap.set('n', '<leader>qr', quarto_render, { desc = '[Q]uarto [R]ender current .qmd file' })
+    end,
   },
   -- { -- directly open ipynb files as quarto docuements
   --   -- and convert back behind the scenes

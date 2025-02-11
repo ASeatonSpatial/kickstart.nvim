@@ -2,74 +2,23 @@ require 'config.global'
 require 'config.keymaps'
 require 'config.autocmd'
 require 'config.lazy' -- see lua/config/lazy.lua for contents page of plugins
-require 'plugins.keymaps'
 
--- MY TODO:
--- 1. Modularise - keybinds.lua, autocmd.lua, quarto.lua and so on.
+-- TODO:
+-- 1. DONE: Modularise - keybinds.lua, autocmd.lua, quarto.lua and so on.
 -- 2. Write my own version of slime calls for quarto support
 -- 3. Add support for markdown files.  Knitr nvim plugins?
 -- 4. Try the folke/flash plugin for faster navigation? It looks really cool.
 -- 5. General git integration plugins.  Or stick with sourcetree? Investigate
--- 6. Check out the oil plugin to edit filesystem in a buffer
+-- 6. DONE -Check out the oil plugin to edit filesystem in a buffer
 -- 7. DONE - Add custom keymap for rendering open quarto file
 -- 8. MAJOR PROJECT:  Add support for .tex files
 -- 9. Any way to delete sessions from the select list?
--- 10. Move rest of init.lua setup into config = function() sections
-
--- Quarto setup:
-local quarto = require 'quarto'
-quarto.setup()
-
--- Quarto preview
-vim.keymap.set('n', '<leader>qp', quarto.quartoPreview, { silent = true, noremap = true, desc = 'Quarto preview' })
-
--- Insert R code chunk on new line below current line
-vim.keymap.set('n', '<leader>qc', 'o```{r}<CR>```<esc>O', { desc = '[I]nsert R code chunk' })
-
--- Quarto render
-local function quarto_render()
-  -- Check if the current buffer is a .qmd file
-  if vim.bo.filetype ~= 'quarto' then
-    print 'Not a .qmd file. Unable to run Quarto render.'
-    return
-  end
-
-  -- Get the full path of the current file
-  local current_file = vim.fn.expand '%:p'
-
-  -- Open a new tab with a terminal buffer
-  vim.cmd 'tabnew'
-  vim.cmd 'terminal'
-
-  vim.defer_fn(function()
-    vim.cmd 'startinsert' -- Ensure terminal starts in insert mode
-  end, 100)
-
-  -- local term_bufnr = vim.api.nvim_get_current_buf()
-
-  -- Send the `quarto render` command to the terminal
-  local render_cmd = 'quarto render ' .. vim.fn.shellescape(current_file) .. '\n'
-  vim.fn.chansend(vim.b.terminal_job_id, render_cmd)
-
-  -- Switch back to normal mode for quicker tabbing back to other files
-  local function check_render_finished()
-    local lines = vim.api.nvim_buf_get_lines(0, -10, -1, false) -- Get last 10 lines
-    for _, line in ipairs(lines) do
-      if line:match 'Output%s+created:' then
-        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('<C-\\><C-n>', true, false, true), 'n', true)
-        return
-      end
-    end
-    -- If not finished, check again in 500ms
-    vim.defer_fn(check_render_finished, 500)
-  end
-
-  -- Start checking for the output message
-  check_render_finished()
-end
-
--- Map to <leader>qr
-vim.keymap.set('n', '<leader>qr', quarto_render, { desc = '[Q]uarto [R]ender current .qmd file' })
+-- 10. DONE: Move rest of init.lua setup into config = function() sections
+-- 11. Quarto and R setup:
+--     a) Move to quarto config = function()?
+--     b) Separate R support from Quarto support?
+--     c) Write separate plugin for slime stuff?
+-- 12. Test this config on windows.
 
 -- R keybinds
 --
