@@ -1,3 +1,8 @@
+-- TODO:
+-- 1. :bdelete
+-- 2. write all open buffers and quit (or save on tabbing out?)
+--
+--
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
