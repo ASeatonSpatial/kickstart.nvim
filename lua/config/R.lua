@@ -139,3 +139,84 @@ function CloseRTerm()
 end
 
 vim.keymap.set('n', '<leader>rq', CloseRTerm, { desc = '[C]lose R terminal', silent = true })
+
+-- TODO:
+-- Redo the slime stuff.  Make my own logic for how to chunk up code and send it
+-- to the terminal buffer.  For example, piggy back on vip visual paragraph selection logic?
+-- Desired features:
+--  1. Smart selection of current paragraph
+--  2. After sending move to top of next paragraph
+--  3. Modular - things like "send all lines above" will chunk up
+--     and call the paragraph sender and cycle through them.
+-- treesitter logic to define paragraphs? Will need to learn more about this.
+-- 
+--
+
+--- Smarter slime
+local function highlight_smart_paragraph()
+  local ts_utils = require('nvim-treesitter.ts_utils')
+  local node = ts_utils.get_node_at_cursor()
+
+  if not node then
+    -- Move cursor to first non-blank character before retrying
+    vim.cmd('normal! ^')
+    node = ts_utils.get_node_at_cursor()
+    if not node then
+      print("No syntax tree node found.")
+      return
+    end
+  end
+
+  -- Move up the tree to find a logical block
+  while node do
+    local type = node:type()
+    if type == "function_definition" or type == "call" or type == "for_statement" then
+      break
+    end
+    -- Handle pipes and ggplot chains
+    if type == "binary" then
+      local parent = node:parent()
+      if parent and parent:type() == "binary" then
+        node = parent -- Expand to full chain
+      end
+      break
+    end
+    node = node:parent()
+  end
+
+  if node then
+    local start_row, _, end_row, _ = node:range() -- Get node line range
+    local total_lines = vim.api.nvim_buf_line_count(0)
+
+    -- Expand upwards to include multi-line pipes or ggplot chains
+    while start_row > 0 do
+      local prev_line = vim.api.nvim_buf_get_lines(0, start_row - 1, start_row, false)[1]
+      if prev_line and (prev_line:match("%%>%s*$") or prev_line:match("%+%s*$")) then
+        start_row = start_row - 1 -- Include the previous line
+      else
+        break
+      end
+    end
+
+    -- Expand downwards to capture ggplot chains or pipes
+    while end_row < total_lines - 1 do
+      local next_line = vim.api.nvim_buf_get_lines(0, end_row + 1, end_row + 2, false)[1]
+      if next_line and next_line:match("^%s*[%%>%+]+") then
+        end_row = end_row + 1 -- Include the next line
+      else
+        break
+      end
+    end
+
+    -- Select the lines in Visual mode
+    vim.api.nvim_win_set_cursor(0, { start_row + 1, 0 }) -- Move to start
+    vim.cmd('normal! V') -- Enter Visual mode
+    vim.api.nvim_win_set_cursor(0, { end_row + 1, 0 }) -- Move to end
+  else
+    print("No suitable code block found.")
+  end
+end
+
+-- Keymap to test it
+vim.keymap.set('n', '<leader>rh', highlight_smart_paragraph, { desc = '[R] Highlight smart paragraph' })
+
