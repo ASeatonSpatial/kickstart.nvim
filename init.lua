@@ -1003,11 +1003,13 @@ require('lazy').setup({
 
 -- TODO:
 -- 1. Modularise - keybinds.lua, autocmd.lua, quarto.lua and so on.
+-- 2. Write my own version of slime calls for quarto support.
 -- 2. Add support for markdown files.  Knitr nvim plugins?
 -- 3. Try the folke/flash plugin for faster navigation? It looks really cool.
 -- 4. General git integration plugins.  Or stick with sourcetree? Investigate
 -- 5. Check out the oil plugin to edit filesystem in a buffer
--- 6. Add custom keymap for rendering open quarto file
+-- 6. DONE - Add custom keymap for rendering open quarto file 
+-- 7. MAJOR PROJECT:  Add support for .tex files
 
 -- Quarto keybinds
 local quarto = require 'quarto'
