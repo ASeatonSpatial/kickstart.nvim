@@ -14,8 +14,10 @@ require 'plugins.keymaps'
 -- 7. DONE - Add custom keymap for rendering open quarto file
 -- 8. MAJOR PROJECT:  Add support for .tex files
 -- 9. Any way to delete sessions from the select list?
+-- 10. Move rest of init.lua setup into config = function() sections
 
--- Quarto keybinds
+-- Quarto setup:
+-- 
 local quarto = require 'quarto'
 quarto.setup()
 
