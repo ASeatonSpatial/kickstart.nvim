@@ -1,7 +1,7 @@
 require 'config.global'
 require 'config.keymaps'
 require 'config.autocmd'
-require 'config.lazy'
+require 'config.lazy' -- see lua/config/lazy.lua for contents page of plugins
 require 'plugins.keymaps'
 
 -- MY TODO:
