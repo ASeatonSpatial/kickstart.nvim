@@ -1,6 +1,3 @@
-# This is a test to see what the LSP
-# does
-
 library(ggplot2)
 library(dplyr)
 
@@ -15,15 +12,19 @@ ggplot(df) +
 df %>%
   head()
 
+# for statement 
 for (i in 1:4){
-  
   print(i)
-  # Here is a comment
-
 }
 
+# If statement
+if (TRUE){
+  print("hello")
+}
+
+# Curly brackets
 {
-  print("hello") 
-  1 + 1
+  print("hello")
+  print("bye")
 }
 

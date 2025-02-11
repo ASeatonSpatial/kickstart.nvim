@@ -182,13 +182,83 @@ local function para_blank_line(current_line)
   return result
 end
 
+--- Paragraph is loop statement
+local function get_last_char_pos(line)
+  local text = vim.fn.getline(line)
+  local last_col = text:match("^.*()%S")
+  return last_col or 1
+end
+
+local function para_loop(current_line)
+  local last_char_col = get_last_char_pos(current_line)
+  vim.fn.cursor(current_line, last_char_col)
+
+  local node = vim.treesitter.get_node()
+  while node do
+    if node:type() == "for_statement" or node:type() == "while_statement" then
+      local start_row, _, end_row, _ = node:range()
+      return { start_line = start_row + 1, end_line = end_row + 1 }
+    end
+    node = node:parent()
+  end
+  return nil
+end
+
+-- Paragraph is if statement
+local function para_if(current_line)
+  local last_char_col = get_last_char_pos(current_line)
+  vim.fn.cursor(current_line, last_char_col)
+
+  local node = vim.treesitter.get_node()
+  while node do
+    if node:type() == "if_statement" then
+      local start_row, _, end_row, _ = node:range()
+      return { start_line = start_row + 1, end_line = end_row + 1 }
+    end
+    node = node:parent()
+  end
+  return nil
+end
+
+--- Para curly bracket
+local function para_cbracket(current_line)
+  local last_char_col = get_last_char_pos(current_line)
+  vim.fn.cursor(current_line, last_char_col)
+
+  local node = vim.treesitter.get_node()
+  while node do
+    if node:type() == "braced_expression" then
+      local start_row, _, end_row, _ = node:range()
+      return { start_line = start_row + 1, end_line = end_row + 1 }
+    end
+    node = node:parent()
+  end
+  return nil
+end
+
+local function get_paragraph(current_line)
+  local checkers = { para_loop,
+    para_if,
+    para_cbracket,
+    para_blank_line, -- defaults to this if no other checkers return a paragraph
+  }
+  for _, para_checker in ipairs(checkers) do
+    local para = para_checker(current_line)
+    if para then
+      return para
+    end
+  end
+end
+
+-- Highlight paragraph function
 local function highlight_paragraph()
+
   -- Get the current line and column position
   local current_line = vim.fn.line '.'
-  local current_col = vim.fn.col '.'
 
   -- Use para_blank_line to find the start and end of the paragraph
-  local para = para_blank_line(current_line)
+  -- local para = para_loop(current_line) or para_if(current_line) or para_cbracket() or para_blank_line(current_line)
+  local para = get_paragraph(current_line)
   local start_line = para.start_line
   local end_line = para.end_line
 
