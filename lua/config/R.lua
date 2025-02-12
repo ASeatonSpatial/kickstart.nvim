@@ -172,7 +172,8 @@ local function para_blank_line(current_line)
         out = line - direction -- previous line before blank is paragraph limit
         go = false
       end
-      line = line + direction    end
+      line = line + direction
+    end
     return out
   end
 
@@ -185,7 +186,7 @@ end
 --- Paragraph is loop statement
 local function get_last_char_pos(line)
   local text = vim.fn.getline(line)
-  local last_col = text:match("^.*()%S")
+  local last_col = text:match '^.*()%S'
   return last_col or 1
 end
 
@@ -195,7 +196,7 @@ local function para_loop(current_line)
 
   local node = vim.treesitter.get_node()
   while node do
-    if node:type() == "for_statement" or node:type() == "while_statement" then
+    if node:type() == 'for_statement' or node:type() == 'while_statement' then
       local start_row, _, end_row, _ = node:range()
       return { start_line = start_row + 1, end_line = end_row + 1 }
     end
@@ -211,7 +212,7 @@ local function para_if(current_line)
 
   local node = vim.treesitter.get_node()
   while node do
-    if node:type() == "if_statement" then
+    if node:type() == 'if_statement' then
       local start_row, _, end_row, _ = node:range()
       return { start_line = start_row + 1, end_line = end_row + 1 }
     end
@@ -227,7 +228,7 @@ local function para_cbracket(current_line)
 
   local node = vim.treesitter.get_node()
   while node do
-    if node:type() == "braced_expression" then
+    if node:type() == 'braced_expression' then
       local start_row, _, end_row, _ = node:range()
       return { start_line = start_row + 1, end_line = end_row + 1 }
     end
@@ -237,7 +238,8 @@ local function para_cbracket(current_line)
 end
 
 local function get_paragraph(current_line)
-  local checkers = { para_loop,
+  local checkers = {
+    para_loop,
     para_if,
     para_cbracket,
     para_blank_line, -- defaults to this if no other checkers return a paragraph
@@ -251,27 +253,44 @@ local function get_paragraph(current_line)
 end
 
 -- Highlight paragraph function
+-- Useful for testing get_paragraph() logic
 local function highlight_paragraph()
-
   -- Get the current line and column position
   local current_line = vim.fn.line '.'
 
-  -- Use para_blank_line to find the start and end of the paragraph
-  -- local para = para_loop(current_line) or para_if(current_line) or para_cbracket() or para_blank_line(current_line)
   local para = get_paragraph(current_line)
   local start_line = para.start_line
   local end_line = para.end_line
 
   -- Debug: Print the start and end lines of the paragraph
-  print("Start line: " .. start_line .. " End line: " .. end_line)
+  print('Start line: ' .. start_line .. ' End line: ' .. end_line)
 
-  -- Move the cursor to the start line
   vim.fn.cursor(start_line, 1)
-
-  -- Visually select the lines from start_line to end_line
-  vim.cmd('normal! V')  -- Start visual mode
-  vim.fn.cursor(end_line, 1)  -- Move to the end line
-
+  vim.cmd 'normal! V'
+  vim.fn.cursor(end_line, 1)
 end
 
-vim.keymap.set('n', '<leader>rh', highlight_paragraph, { desc = '[R] Highlight paragraph' })
+-- Send paragraph to terminal using slime
+local function slime_send_paragraph()
+  local current_line = vim.fn.line '.'
+  local para = get_paragraph(current_line)
+  local start_line = para.start_line
+  local end_line = para.end_line
+
+  -- Debug: Print the start and end lines of the paragraph
+  print('Start line: ' .. start_line .. ' End line: ' .. end_line)
+
+  vim.fn['slime#send_range'](start_line, end_line)
+end
+
+-- Send line to terminal using slime
+local function slime_send_line()
+  local current_line = vim.fn.line '.'
+  local current_col = vim.fn.col '.'
+  vim.fn['slime#send_lines'](1)
+  vim.fn.cursor(current_line + 1, current_col)
+end
+
+vim.keymap.set('n', '<leader>rh', highlight_paragraph, { desc = '[H]ighlight paragraph' })
+vim.keymap.set('n', '<leader>rp', slime_send_paragraph, { desc = '[R]un paragraph' })
+vim.keymap.set('n', '<C-CR>', slime_send_line, { desc = '[R]un line'})
