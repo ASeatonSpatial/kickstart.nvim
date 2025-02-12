@@ -120,7 +120,7 @@ the current plugin status. Hit `q` to close the window.
 
 * I don't want to install the whole configuration, can you point me to the relevant parts about working with R, quarto and Rmarkdown?
   * The files `lua/config/R.lua` and `lua/plugins/quarto.lua` contain most of it.
-  * The LSP set up is in `lua/plugins/lsp.lua` and `lua/plugings/cmp.lua`.  
+  * The LSP set up is in `lua/plugins/lsp.lua` and `lua/plugins/cmp.lua`.  
   * I haven't tested this but I think those 4 files have the things required and in theory can be incorporated piecemeal into other configurations.  If this continues to develop then I will consider making a standalone plugin.
 
 Some kickstart FAQs that might be useful to you:
