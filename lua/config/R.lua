@@ -291,6 +291,13 @@ local function slime_send_line()
   vim.fn.cursor(current_line + 1, current_col)
 end
 
+-- Send whole file
+local function slime_send_file()
+  local maxline = vim.fn.line '$'
+  vim.fn['slime#send_range'](1, maxline)
+end
+
 vim.keymap.set('n', '<leader>rh', highlight_paragraph, { desc = '[H]ighlight paragraph' })
-vim.keymap.set('n', '<leader>rp', slime_send_paragraph, { desc = '[R]un paragraph' })
-vim.keymap.set('n', '<C-CR>', slime_send_line, { desc = '[R]un line'})
+vim.keymap.set('n', '<leader>rp', slime_send_paragraph, { desc = 'Slime [R]un paragraph' })
+vim.keymap.set('n', '<C-CR>', slime_send_line, { desc = 'Slime [R]un line' })
+vim.keymap.set('n', '<leader>rf', slime_send_file, { desc = 'Slime [R]un file' })
