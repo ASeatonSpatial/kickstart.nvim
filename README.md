@@ -34,7 +34,7 @@ In general, commands to do with R all begin with `<leader>r` and commands to do 
 Pressing these will open a which-key menu that you can peruse.
 Note, `<leader>` is spacebar in this configuration, you can change this to something else in `lua/config/global.lua`.
 
-You can also run nvim in your config location and do `<leader>sg`  ('search with grep') and look for `vim.set.keymap` to find all the places keymaps are defined in the confiuration lua files.
+You can also run nvim in your config location and do `<leader>sg`  ('search with grep') and look for `vim.set.keymap` to find all the places keymaps are defined in the configuration lua files.
 
 ## Should I try this configuration?
 
