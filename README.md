@@ -16,8 +16,8 @@ This builds on top of the minimal kickstart configuration to add support for wor
 - LSP support through ['mason'](https://github.com/williamboman/mason.nvim) and ['mason-lspconfig'](https://github.com/williamboman/mason-lspconfig.nvim)
 - Code completion through ['nvim-cmp'](https://github.com/hrsh7th/nvim-cmp)
 - ['telescope'](https://github.com/nvim-telescope/telescope.nvim) file finder
-- ['oil'](https://github.com/stevearc/oil.nvim) file system manager
-- ['slime'](https://github.com/jpalardy/vim-slime) to send R code to a terminal buffer running R
+- ['oil.nvim'](https://github.com/stevearc/oil.nvim) file system manager
+- ['vim-slime'](https://github.com/jpalardy/vim-slime) to send R code to a terminal buffer running R
 - ['quarto-nvim'](https://github.com/quarto-dev/quarto-nvim) to support quarto documents
 
 On top of these ingredients this configuration contains helper keymaps to custom functions for things like
@@ -29,23 +29,27 @@ On top of these ingredients this configuration contains helper keymaps to custom
 - Running an R code chunk in a quarto document
 - Previewing math equations in a quarto document
 
-To learn the configuration keymaps you can explore the ['which-key'](https://github.com/folke/which-key.nvim) menus that appear at the bottom when you press keys in normal mode.  In general, commands to do with R all begin with `<leader>r` and commands to do with quarto documents begin with `<leader>q`.  Pressing these will open a which-key menu that you can peruse.  Note, `<leader>` is spacebar in this configuration, you can change this to something else in `lua/config.global.lua`.
+To learn the configuration keymaps you can explore the ['which-key'](https://github.com/folke/which-key.nvim) menus that appear at the bottom when you press keys in normal mode.
+In general, commands to do with R all begin with `<leader>r` and commands to do with quarto documents begin with `<leader>q`.
+Pressing these will open a which-key menu that you can peruse.
+Note, `<leader>` is spacebar in this configuration, you can change this to something else in `lua/config/global.lua`.
 
 You can also run nvim in your config location and do `<leader>sg`  ('search with grep') and look for `vim.set.keymap` to find all the places keymaps are defined in the confiuration lua files.
 
 ## Should I try this configuration?
 
-This is a very minimal set up for working with R code in neovim.  There are more extensive options out there like the ['nvim-r'](https://github.com/jalvesaq/Nvim-R) plugin.  
-If you want a more IDE-like experience with more documentation and a bigger user-base then ['nvim-r'](https://github.com/jalvesaq/Nvim-R) is probably the better choice. 
-The main benefit of this configuration is that it is fully written in lua and so is easily customisable and extendible using the modern `neovim` ecosystem.
-It does not have almost all of the features of  ['nvim-r'](https://github.com/jalvesaq/Nvim-R) 
+This is a very minimal set up for working with R code in neovim.  There are more extensive options out there like the ['Nvim-R'](https://github.com/jalvesaq/Nvim-R) plugin.  
+If you want a more IDE-like experience with more documentation and a bigger user-base then ['Nvim-R'](https://github.com/jalvesaq/Nvim-R) is probably the better choice. 
 
-This configuration is suitable for somebody comfortable exploring `nvim` configurations to learn how things work and making tweaks if it doesn't match up with your intended workflow.  
+The main benefit of this configuration is that it is fully written in lua and so is easily customisable and extendible using the modern neovim ecosystem.
+It does not have many of the features of  ['Nvim-R'](https://github.com/jalvesaq/Nvim-R).
+
+This configuration is suitable for somebody comfortable exploring neovim configurations to learn how things work and making tweaks if it doesn't match up with your intended workflow.  
 It is not intended to be a beginner-friendly neovim experience.  
 If you are new, I recommend starting with ['kickstart.nvim'](https://github.com/nvim-lua/kickstart.nvim) and returning here at a later date.
 
 This configuration works well if all you want to do is open a single R terminal buffer and then send code to that single terminal from other buffers. 
-Other situations like mulitple buffers open running different languages (e.g. R and python) are likely to dramatically fail. 
+Other situations like multiple buffers open running different languages (e.g. R and python) are likely to dramatically fail. 
 
 ## Installation
 
@@ -71,7 +75,7 @@ Neovim's configurations are located under the following paths, depending on your
 so that you have your own copy that you can modify, then install by cloning the
 fork to your machine using one of the commands below, depending on your OS.
 
-#### Clone kickstart.nvim
+#### Clone nvim.config
 
 > **NOTE**
 > If following the recommended step above (i.e., forking the repo), replace
@@ -117,7 +121,7 @@ the current plugin status. Hit `q` to close the window.
 * I don't want to install the whole configuration, can you point me to the relevant parts about working with R, quarto and Rmarkdown?
   * The files `lua/config/R.lua` and `lua/plugins/quarto.lua` contain most of it.
   * The LSP set up is in `lua/plugins/lsp.lua` and `lua/plugings/cmp.lua`.  
-  * I haven't tested this but I think those 4 files have the things required and in theory can be incorporated piecemeal to other configurations.  
+  * I haven't tested this but I think those 4 files have the things required and in theory can be incorporated piecemeal into other configurations.  If this continues to develop then I will consider making a standalone plugin.
 
 Some kickstart FAQs that might be useful to you:
 
