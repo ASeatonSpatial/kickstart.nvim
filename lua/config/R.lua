@@ -270,8 +270,18 @@ local function highlight_paragraph()
   vim.fn.cursor(end_line, 1)
 end
 
+-- Check if buffer is .R, .qmd or .rmd file
+local function is_r_slime_compatible()
+  local filetype = vim.bo.filetype
+  return filetype == "r" or filetype == "rmd" or filetype == "quarto"
+end
+
 -- Send paragraph to terminal using slime
 local function slime_send_paragraph()
+  if not is_r_slime_compatible() then
+    print("Not a .R, .qmd or .rmd filetype. Aborting.")
+    return
+  end
   local current_line = vim.fn.line '.'
   local para = get_paragraph(current_line)
   local start_line = para.start_line
@@ -285,6 +295,10 @@ end
 
 -- Send line to terminal using slime
 local function slime_send_line()
+  if not is_r_slime_compatible() then
+    print("Not a .R, .qmd or .rmd filetype. Aborting.")
+    return
+  end
   local current_line = vim.fn.line '.'
   local current_col = vim.fn.col '.'
   vim.fn['slime#send_lines'](1)
@@ -292,7 +306,16 @@ local function slime_send_line()
 end
 
 -- Send whole file
+local function is_r_file()
+  local filetype = vim.bo.filetype
+  return filetype == "r"
+end
+
 local function slime_send_file()
+  if not is_r_file() then
+    print("Not an .R file. Aborting.")
+    return
+  end
   local maxline = vim.fn.line '$'
   vim.fn['slime#send_range'](1, maxline)
 end
